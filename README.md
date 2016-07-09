@@ -190,3 +190,12 @@ The items we need to change is the <i>app</i> key in <i>map</i> and <i>package</
 The <i>app</i> key in map tells the loader to look in <i>dict</i> directory for app module.
 The <i>app</i> key in package tells the loader to use the file, <i>main.js</i> in the dist folder,
 for <i>app</i> module.
+
+If you look back at our index.html file, you will that in the last script tag, we are loading the
+<i>app</i> module. Here it is,
+
+    <script>
+      System.import('app').catch(function(err){ console.error(err); });
+    </script>
+
+This bootstraps our app.
