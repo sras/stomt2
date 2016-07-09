@@ -98,10 +98,8 @@ by adding a configuration file for the typescript compiler. The <i>tsconfig</i> 
 We only need to tweak with the last two entries. The <i>rootDir</i> and <i>outDir</i>.
 The first one, <i>rootDir</i> tells the compiler the directory to base the directory
 structure in target on. And <i>outDir</i> to specify the directory where the output files, ie the
-js files should be placed. So typescript compiler will walk through the project directory,
-and when it sees a typescript file, ie a .ts file, it compiles it and produces a .js files.
-It them places it in the same path in <i>outDir</i>, that the source .ts file was, relative to the
-<i>rootDir</i>.
+js files should be placed. So when you run the typescript compiler, it will create bunch of .js
+files in <i>dist</i>, following the directory structure of typescript files in the app folder.
 
 Now, let us create our index file. Create index.html in the project root, with the following content.
 Until we have a proper build system in place, we will use the project folder as DocumentRoot.
@@ -186,7 +184,7 @@ Create a file named <i>systemjs.config.js</i> in our project root folder with th
       System.config(config);
     })(this);
 
-The items we need to change is the <i>app</i> key in <i>map</i> and <i>package</i> objects.
+The items you might need to change is the <i>app</i> key in <i>map</i> and <i>package</i> objects.
 The <i>app</i> key in map tells the loader to look in <i>dict</i> directory for app module.
 The <i>app</i> key in package tells the loader to use the file, <i>main.js</i> in the dist folder,
 for <i>app</i> module.
