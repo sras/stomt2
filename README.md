@@ -97,8 +97,96 @@ by adding a configuration file for the typescript compiler. The <i>tsconfig</i> 
 
 We only need to tweak with the last two entries. The <i>rootDir</i> and <i>outDir</i>.
 The first one, <i>rootDir</i> tells the compiler the directory to base the directory
-structre in target on. And outDir to specify the directory where the output files, ie the
+structure in target on. And <i>outDir</i> to specify the directory where the output files, ie the
 js files should be placed. So typescript compiler will walk through the project directory,
 and when it sees a typescript file, ie a .ts file, it compiles it and produces a .js files.
-It them places it in the same path in outDir, that the source .ts file was, relative to the
-root dir.
+It them places it in the same path in <i>outDir</i>, that the source .ts file was, relative to the
+<i>rootDir</i>.
+
+Now, let us create our index file. Create index.html in the project root, with the following content.
+Until we have a proper build system in place, we will use the project folder as DocumentRoot.
+
+    <html>
+      <head>
+        <base href="/">
+        <title>Angular 2 QuickStart</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+        <!-- 1. Load libraries -->
+         <!-- Polyfill(s) for older browsers -->
+        <script src="node_modules/core-js/client/shim.min.js"></script>
+        <script src="node_modules/zone.js/dist/zone.js"></script>
+        <script src="node_modules/reflect-metadata/Reflect.js"></script>
+        <script src="node_modules/systemjs/dist/system.src.js"></script>
+        <!-- 2. Configure SystemJS -->
+        <script src="systemjs.config.js"></script>
+        <script>
+          System.import('app').catch(function(err){ console.error(err); });
+        </script>
+      </head>
+      <!-- 3. Display the application -->
+      <body>
+        <stomt-app>Loading...</stomt-app>
+      </body>
+    </html>
+    
+You will notice that there is a script tag with source as <i>systemjs.config.js</i>.
+This contains the configuration for Systemjs module loader, which is actually responsible for loading
+our app's code.
+
+Create a file named <i>systemjs.config.js</i> in our project root folder with the following content.
+    
+    /**
+     * System configuration for Angular 2 samples
+     * Adjust as necessary for your application needs.
+     */
+    (function(global) {
+      // map tells the System loader where to look for things
+      var map = {
+        'app':                        'dist',
+        '@angular':                   'node_modules/@angular',
+        'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
+        'rxjs':                       'node_modules/rxjs'
+      };
+      // packages tells the System loader how to load when no filename and/or no extension
+      var packages = {
+        'app':                        { main: 'main.js',  defaultExtension: 'js' },
+        'rxjs':                       { defaultExtension: 'js' },
+        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
+      };
+      var ngPackageNames = [
+        'common',
+        'compiler',
+        'core',
+        'forms',
+        'http',
+        'platform-browser',
+        'platform-browser-dynamic',
+        'router',
+        'router-deprecated',
+        'upgrade',
+      ];
+      // Individual files (~300 requests):
+      function packIndex(pkgName) {
+        packages['@angular/'+pkgName] = { main: 'index.js', defaultExtension: 'js' };
+      }
+      // Bundled (~40 requests):
+      function packUmd(pkgName) {
+        packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
+      }
+      // Most environments should use UMD; some (Karma) need the individual index files
+      var setPackageConfig = System.packageWithIndex ? packIndex : packUmd;
+      // Add package entries for angular packages
+      ngPackageNames.forEach(setPackageConfig);
+      var config = {
+        map: map,
+        packages: packages
+      };
+      System.config(config);
+    })(this);
+
+The items we need to change is the <i>app</i> key in <i>map</i> and <i>package</i> objects.
+The <i>app</i> key in map tells the loader to look in <i>dict</i> directory for app module.
+The <i>app</i> key in package tells the loader to use the file, <i>main.js</i> in the dist folder,
+for <i>app</i> module.
